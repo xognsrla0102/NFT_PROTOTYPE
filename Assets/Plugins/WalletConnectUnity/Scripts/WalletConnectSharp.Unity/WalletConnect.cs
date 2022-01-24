@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +24,7 @@ namespace WalletConnectSharp.Unity
     public class WalletConnect : BindableMonoBehavior
     {
         [SerializeField] private Button LoginButton;
+        [SerializeField] private Text statusText;
 
         public Dictionary<string, AppEntry> SupportedWallets
         {
@@ -143,6 +144,7 @@ namespace WalletConnectSharp.Unity
 
             if (waitForWalletOnStart)
             {
+                statusText.text = "소켓 연결 중...";
                 StartConnect();
                 OnSocketConnected();
             }
@@ -158,6 +160,7 @@ namespace WalletConnectSharp.Unity
             }
             LoginButton.interactable = true;
             print("ConnectURL: " + ConnectURL);
+            statusText.text = "메타마스크 계정을 연동하세요.";
         }
 
         public SavedSession SaveSession()
