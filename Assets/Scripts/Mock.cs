@@ -24,26 +24,12 @@ public static class Mock
         myAddress = PlayerPrefs.GetString("Account");
 #endif
 
-        string json;
+        DB.Add("1", new GroundInfo("1", "House1", new Vector3(-35f, 4.5f, 40f), new Vector3(0f, 180f, 0f)));
+        DB.Add("2", new GroundInfo("2", "House2", new Vector3(-13f, 4.5f, 40f), new Vector3(0f, 180f, 0f)));
+        DB.Add("3", new GroundInfo("3", "House3", new Vector3(15f, 8f, 40f), new Vector3(0f, 180f, 0f)));
+        DB.Add("4", new GroundInfo("4", "House4", new Vector3(41f, 7f, 13f), new Vector3(0f, 270f, 0f)));
+        DB.Add("6", new GroundInfo("6", "House5", new Vector3(40f, 7f, -30f), new Vector3(0f, 270f, 0f)));
 
-        #region 임시로 json 작성
-        // 파일 입출력으로 클라에서 DB 정보 임시로 가져옴
-        // 토큰ID를 통해 URI 얻어오고, 나머지 정보는 DB에서 그냥 들고있음
-        //DB.Add("1", new GroundInfo("1", "House1", new Vector3(-35f, 4.5f, 40f), new Vector3(0f, 180f, 0f)));
-        //DB.Add("2", new GroundInfo("2", "House2", new Vector3(-13f, 4.5f, 40f), new Vector3(0f, 180f, 0f)));
-        //DB.Add("3", new GroundInfo("3", "House3", new Vector3(15f, 8f, 40f), new Vector3(0f, 180f, 0f)));
-        //DB.Add("4", new GroundInfo("4", "House4", new Vector3(41f, 7f, 13f), new Vector3(0f, 270f, 0f)));
-        //DB.Add("6", new GroundInfo("6", "House5", new Vector3(40f, 7f, -30f), new Vector3(0f, 270f, 0f)));
-        //                                
-        //json = JsonUtility.ToJson(new Serialization<string, GroundInfo>(DB));
-        //Debug.Log(json);
-        //File.WriteAllText("Assets/Resources/DB/GroundInfo.json", json);
-        #endregion
-
-        //DB 데이터 얻어오기
-        json = File.ReadAllText("Assets/Resources/DB/GroundInfo.json");
-        DB = JsonUtility.FromJson<Serialization<string, GroundInfo>>(json).ToDictionary();
-        
         foreach (var data in DB)
         {
             Ground ground = Resources.Load<Ground>("Prefabs/Ground");
