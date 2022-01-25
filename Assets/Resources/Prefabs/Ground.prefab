@@ -105,7 +105,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6306280690248992522}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 7}
+  m_LocalPosition: {x: 0, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6306280690243399950}
@@ -190,7 +190,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f311a926fba8504cb8311e7e890bb11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
 --- !u!1 &6306280690346193475
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,7 +334,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 0}
+  m_Texture: {fileID: 2800000, guid: 2fffc325d5b72ff41acccd26121ccdb9, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -386,5 +385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d457ef0d510bd8c4d88495569b6079dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tokenID: 
   houseNameText: {fileID: 6306280690346193477}
   houseImage: {fileID: 6306280690575308464}
+  billBoardCanvas: {fileID: 6306280690248992526}

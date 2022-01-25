@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
         downVelocity += gravity * Time.deltaTime;
 
         Vector3 moveVelocity = transform.forward * moveDir.y + transform.right * moveDir.x;
+        moveVelocity *= Input.GetKey(KeyCode.LeftShift) ? 1.5f : 1;
         Vector3 gravityVelocity = Vector3.up * downVelocity;
         Vector3 velocity = moveVelocity * moveSpd + gravityVelocity;
         cc.Move(velocity * Time.deltaTime);

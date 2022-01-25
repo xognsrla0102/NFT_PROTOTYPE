@@ -13,12 +13,12 @@ public class ImportNFTTextureExample : MonoBehaviour
     async void Start()
     {
         string chain = "ethereum";
-        string network = "rinkeby";
-        string contract = "0x3a8A85A6122C92581f590444449Ca9e66D8e8F35";
-        string tokenId = "5";
+        string network = "ropsten";
+        string contract = "0x9348a03e2f16abd79cd0b726ce0579631c540dc8";
+        string tokenId = "1";
 
         // fetch uri from chain
-        string uri = await ERC1155.URI(chain, network, contract, tokenId);
+        string uri = await ERC721.URI(chain, network, contract, tokenId);
         print("uri: " + uri);
 
         // fetch json from uri
