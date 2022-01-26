@@ -54,7 +54,7 @@ public static class Mock
     public static async Task<Texture> GetTexture(string tokenID)
     {
         string uri = await ERC721.URI(chain, network, contract, tokenID);
-        Debug.Log("uri: " + uri);
+        //Debug.Log("uri: " + uri);
 
         UnityWebRequest webRequest = UnityWebRequest.Get(uri);
         await webRequest.SendWebRequest();

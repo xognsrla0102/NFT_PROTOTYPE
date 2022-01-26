@@ -1,8 +1,12 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
+    public VariableJoystick moveJoystick;
+    public VariableJoystick rotationJoystick;
+
     private CharacterController cc;
 
     [SerializeField] private Transform playerCamera;
@@ -21,26 +25,29 @@ public class PlayerController : MonoBehaviour
     {
         cc = GetComponent<CharacterController>();
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if (GameManager.Instance.isAndroidMode == false)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        #region ƒ´∏ﬁ∂Û »∏¿¸
-        cameraRot -= Input.GetAxis("Mouse Y") * mouseSensitivity;
-        cameraRot = Mathf.Clamp(cameraRot, -90f, 90f);
-        playerCamera.localEulerAngles = Vector3.right * cameraRot;
-
-        transform.Rotate(Vector3.up * Input.GetAxis("Mouse X") * mouseSensitivity);
-        #endregion
-
-        #region ¿Ãµø
-        Vector2 moveDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        #region Ïù¥Îèô
+        Vector2 moveDir;
+        if (GameManager.Instance.isAndroidMode)
+        {
+            moveDir = new Vector2(moveJoystick.Horizontal, moveJoystick.Vertical);
+        }
+        else
+        {
+            moveDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        }
         moveDir.Normalize();
 
         if (cc.isGrounded) downVelocity = 0f;
-        downVelocity += gravity * Time.deltaTime;
+        downVelocity += gravity * Time.fixedDeltaTime;
 
         Vector3 moveVelocity = transform.forward * moveDir.y + transform.right * moveDir.x;
         moveVelocity *= Input.GetKey(KeyCode.LeftShift) ? 1.5f : 1;
@@ -49,9 +56,22 @@ public class PlayerController : MonoBehaviour
         cc.Move(velocity * Time.deltaTime);
         #endregion
 
-        #region ¡°«¡
+        #region Ï†êÌîÑ
         if (Input.GetKeyDown(KeyCode.Space) && !isJump)
             StartCoroutine(JumpCoroutine());
+        #endregion
+    }
+
+    public void Update()
+    {
+        #region Ïπ¥Î©îÎùº ÌöåÏ†Ñ
+        if (GameManager.Instance.isAndroidMode) return;
+
+        cameraRot -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+        cameraRot = Mathf.Clamp(cameraRot, -90f, 90f);
+        playerCamera.localEulerAngles = Vector3.right * cameraRot;
+
+        transform.Rotate(Vector3.up * Input.GetAxis("Mouse X") * mouseSensitivity);
         #endregion
     }
 
