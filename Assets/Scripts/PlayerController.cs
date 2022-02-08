@@ -24,12 +24,6 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         cc = GetComponent<CharacterController>();
-
-        if (GameManager.Instance.isAndroidMode == false)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
     }
 
     private void FixedUpdate()
@@ -57,8 +51,10 @@ public class PlayerController : MonoBehaviour
         #endregion
 
         #region 점프
-        if (Input.GetKeyDown(KeyCode.Space) && !isJump)
+        if (Input.GetKey(KeyCode.Space) && !isJump)
+        {
             StartCoroutine(JumpCoroutine());
+        }
         #endregion
     }
 
@@ -73,6 +69,11 @@ public class PlayerController : MonoBehaviour
 
         transform.Rotate(Vector3.up * Input.GetAxis("Mouse X") * mouseSensitivity);
         #endregion
+
+        if (Input.GetKey(KeyCode.E) && GameManager.Instance.isAndroidMode == false)
+        {
+            InventoryManager.Instance.OnClickOpen();
+        }
     }
 
     IEnumerator JumpCoroutine()

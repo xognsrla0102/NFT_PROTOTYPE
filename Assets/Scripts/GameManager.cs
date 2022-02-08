@@ -17,7 +17,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public GameObject inputPanel;
+    [SerializeField] private GameObject mobileInputPanel;
+    [SerializeField] private GameObject uiPanel;
 
     public bool isAndroidMode;
 
@@ -35,11 +36,23 @@ public class GameManager : MonoBehaviour
 #endif
         instance = this;
 
-        inputPanel.SetActive(isAndroidMode);
+        mobileInputPanel.SetActive(isAndroidMode);
+        uiPanel.SetActive(isAndroidMode);
+
+        SetPlayerControllMode(false);
     }
 
     private void Start()
     {
         Mock.Initialize();
+    }
+
+    public void SetPlayerControllMode(bool isUIControll)
+    {
+        // PC 모드일 때만 적용
+        if (isAndroidMode) return;
+
+        Cursor.lockState = isUIControll ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = isUIControll;
     }
 }

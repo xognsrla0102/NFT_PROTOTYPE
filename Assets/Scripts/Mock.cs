@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 public static class Mock
 {
-    private static readonly string chain = "ethereum";
-    private static readonly string network = "ropsten";
-    private static readonly string contract = "0x9468097D8c5f6898B628c43B5Fcf575DE2d5Dc87";
-    private static readonly string myAddress;
+    public static readonly string chain = "ethereum";
+    public static readonly string network = "ropsten";
+    public static readonly string contract = "0x9468097D8c5f6898B628c43B5Fcf575DE2d5Dc87";
+    public static readonly string myAddress;
 
     public static Dictionary<string, GroundInfo> DB = new Dictionary<string, GroundInfo>();
 
