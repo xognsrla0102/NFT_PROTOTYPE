@@ -9,6 +9,6 @@ public class Inventory : MonoBehaviour
 
     private void LoadAllTokenID()
     {
-        //EVM.AllErc721(Mock.chain, Mock.network, Mock.myAddress, Mock.contract);
+        EVM.AllErc721(Mock.chain, Mock.network, Mock.myAddress, Mock.contract);
     }
 }

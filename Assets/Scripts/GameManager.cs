@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -47,9 +47,18 @@ public class GameManager : MonoBehaviour
         Mock.Initialize();
     }
 
+    private void Update()
+    {
+        // ë’¤ë¡œê°€ê¸° ë²„íŠ¼ ëˆ„ë¥´ë©´ ì•± ì¢…ë£Œ
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
+
     public void SetPlayerControllMode(bool isUIControll)
     {
-        // PC ¸ğµåÀÏ ¶§¸¸ Àû¿ë
+        // PC ëª¨ë“œì¼ ë•Œë§Œ ì ìš©
         if (isAndroidMode) return;
 
         Cursor.lockState = isUIControll ? CursorLockMode.None : CursorLockMode.Locked;
