@@ -19,6 +19,8 @@ public class InventoryManager : MonoBehaviour
 
     public Inventory inventory;
 
+    public GameObject mainUIBtn;
+
     public Dictionary<string, ItemInfo> items = new Dictionary<string, ItemInfo>();
 
     private void Awake()
@@ -42,11 +44,13 @@ public class InventoryManager : MonoBehaviour
         inventory.gameObject.SetActive(true);
         inventory.invenPanel.SetActive(true);
         inventory.usePanel.SetActive(false);
+        mainUIBtn.SetActive(false);
     }
 
     public void OnClickClose()
     {
         GameManager.Instance.SetPlayerControllMode(false);
-        inventory.gameObject.SetActive(false);        
+        inventory.gameObject.SetActive(false);
+        mainUIBtn.SetActive(true);
     }
 }
