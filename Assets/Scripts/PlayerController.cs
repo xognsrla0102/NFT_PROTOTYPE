@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -28,6 +28,9 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // 인벤토리 켜져 있을 경우 무시
+        if (InventoryManager.Instance.inventory.invenPanel.activeInHierarchy) return;
+
         #region 이동
         Vector2 moveDir;
         if (GameManager.Instance.isAndroidMode)
@@ -60,9 +63,10 @@ public class PlayerController : MonoBehaviour
 
     public void Update()
     {
-        #region 카메라 회전
-        if (GameManager.Instance.isAndroidMode) return;
+        // 안드로이드이거나, 인벤토리 켜져 있을 경우 무시
+        if (GameManager.Instance.isAndroidMode || InventoryManager.Instance.inventory.invenPanel.activeInHierarchy) return;
 
+        #region 카메라 회전
         cameraRot -= Input.GetAxis("Mouse Y") * mouseSensitivity;
         cameraRot = Mathf.Clamp(cameraRot, -90f, 90f);
         playerCamera.localEulerAngles = Vector3.right * cameraRot;
@@ -70,7 +74,7 @@ public class PlayerController : MonoBehaviour
         transform.Rotate(Vector3.up * Input.GetAxis("Mouse X") * mouseSensitivity);
         #endregion
 
-        if (Input.GetKey(KeyCode.E) && GameManager.Instance.isAndroidMode == false)
+        if (Input.GetKey(KeyCode.E))
         {
             InventoryManager.Instance.OnClickOpen();
         }

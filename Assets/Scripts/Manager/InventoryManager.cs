@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System.Collections.Generic;
 public class InventoryManager : MonoBehaviour
 {
     private static InventoryManager instance;
@@ -17,7 +17,9 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    [SerializeField] private GameObject invenPanel;
+    public Inventory inventory;
+
+    public Dictionary<string, ItemInfo> items = new Dictionary<string, ItemInfo>();
 
     private void Awake()
     {
@@ -33,15 +35,18 @@ public class InventoryManager : MonoBehaviour
 
     public void OnClickOpen()
     {
-        if (invenPanel.activeInHierarchy) return;
+        if (inventory.gameObject.activeInHierarchy) return;
 
         GameManager.Instance.SetPlayerControllMode(true);
-        invenPanel.SetActive(true);
+
+        inventory.gameObject.SetActive(true);
+        inventory.invenPanel.SetActive(true);
+        inventory.usePanel.SetActive(false);
     }
 
     public void OnClickClose()
     {
         GameManager.Instance.SetPlayerControllMode(false);
-        invenPanel.SetActive(false);
+        inventory.gameObject.SetActive(false);        
     }
 }

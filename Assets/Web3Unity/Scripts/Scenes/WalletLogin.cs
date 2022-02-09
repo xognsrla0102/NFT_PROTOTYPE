@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,7 +8,8 @@ public class WalletLogin: MonoBehaviour
 {
     public Toggle rememberMe;
 
-    void Start() {
+    void Start()
+    {
         rememberMe.isOn = PlayerPrefs.GetInt("AutoConnectWallet") == 1 ? true : false;
 
         // if remember me is checked, set the account to the saved account
@@ -25,7 +26,11 @@ public class WalletLogin: MonoBehaviour
         if (Input.GetKey(KeyCode.Escape))
         {
             PlayerPrefs.SetInt("AutoConnectWallet", rememberMe.isOn ? 1 : 0);
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
             Application.Quit();
+#endif
         }
     }
 
@@ -36,7 +41,7 @@ public class WalletLogin: MonoBehaviour
         // set expiration time
         int expirationTime = timestamp + 60;
         // set message
-        string message = $"{expirationTime}";
+        string message = $"접속 시도 시각 : {System.DateTime.Now}";
         // sign message
         string signature = await Web3Wallet.Sign(message);
         // verify account
