@@ -13,6 +13,8 @@ public class Inventory : MonoBehaviour
     private List<Slot> slots = new List<Slot>();
     private int selSlotIdx;
 
+    private GameObject holdingItem;
+
     private void OnEnable()
     {
         //if (itemChangeDetected)
@@ -79,16 +81,30 @@ public class Inventory : MonoBehaviour
     {
         invenPanel.gameObject.SetActive(false);
         usePanel.SetActive(true);
+
+        // 선택한 NFT의 정보로 오브젝트 소환.
+        Ground ground = Resources.Load<Ground>("Prefabs/Ground");
+        ground.tokenID = slots[selSlotIdx].tokenID;
+        holdingItem = Instantiate(ground, GameObject.Find("HoldItemPos").transform).gameObject;
+        holdingItem.name = "HoldingItem";
     }
 
     public void OnClickPutInUseMode()
     {
+        DestroyHoldingItem();
         InventoryManager.Instance.OnClickClose();
     }
 
     public void OnClickCancleInUseMode()
     {
+        DestroyHoldingItem();
         invenPanel.gameObject.SetActive(true);
         usePanel.SetActive(false);
+    }
+
+    private void DestroyHoldingItem()
+    {
+        Destroy(holdingItem);
+        holdingItem = null;
     }
 }

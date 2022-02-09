@@ -11,35 +11,25 @@ public class Ground : MonoBehaviour
     [SerializeField] private RawImage houseImage;
     [SerializeField] private Canvas billBoardCanvas;
 
-    private bool isMine;
-
-    private async void Start()
+    private void Start()
     {
         // 캔버스 월드 스페이스 카메라를 메인 카메라로 설정
         billBoardCanvas.worldCamera = Camera.main;
 
         // DB를 통해서 땅 정보 받아옴
-        //GroundInfo groundInfo = (GroundInfo)Mock.DB[tokenID];
+        ItemInfo itemInfo = InventoryManager.Instance.items[tokenID];
 
-        // 현재 땅의 정보 대입
-        //transform.position = groundInfo.pos;
-        //transform.rotation = Quaternion.Euler(groundInfo.rot);
+        // 하우스 모델 추가
+        //GameObject obj = Resources.Load<GameObject>($"Prefabs/Houses/{itemInfo.itemName}");
+        // json이 설명에 이름이 들어가 있어서 임시로 이 코드 사용
+        GameObject obj = Resources.Load<GameObject>($"Prefabs/Houses/{itemInfo.description}");
+        obj.transform.position = Vector3.zero;
+        obj.transform.rotation = Quaternion.Euler(Vector3.zero);
 
-        // 보유한 NFT인지 확인
-        isMine = await Mock.CheckMine(tokenID);
-
-        if (isMine)
-        {
-            // 하우스 모델 추가
-            //GameObject obj = Resources.Load<GameObject>($"Prefabs/Houses/{groundInfo.itemName}");
-            //obj.transform.position = Vector3.zero;
-            //obj.transform.rotation = Quaternion.Euler(Vector3.zero);
-
-            //Instantiate(obj, transform);
-        }
+        Instantiate(obj, transform);
 
         // 빌보드 UI 초기화
-        //houseNameText.text = $"이름 : {groundInfo.itemName}({(isMine ? "보유" : "미보유")})";
-        //houseImage.texture = await Mock.GetTexture(tokenID);
+        houseNameText.text = $"이름 : {itemInfo.itemName}";
+        houseImage.texture = itemInfo.texture;
     }
 }
