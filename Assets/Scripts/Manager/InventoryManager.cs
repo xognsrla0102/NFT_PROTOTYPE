@@ -21,7 +21,7 @@ public class InventoryManager : MonoBehaviour
 
     public GameObject mainUIBtn;
 
-    public Dictionary<string, ItemInfo> items = new Dictionary<string, ItemInfo>();
+    public Dictionary<string, ItemInfo> items;
 
     private void Awake()
     {
@@ -33,6 +33,21 @@ public class InventoryManager : MonoBehaviour
         }
 
         instance = this;
+        items = Mock.items;
+
+        #region 월드 오브젝트 생성
+        foreach (var worldInfo in Mock.worldObjectInfos)
+        {
+            Ground ground = Resources.Load<Ground>("Prefabs/Ground");
+            ground.tokenID = worldInfo.tokenID;
+
+            ItemInfo itemInfo = items[worldInfo.tokenID];
+            Instantiate(ground, GameObject.Find("Environment").transform)
+                .name = itemInfo.itemName;
+        }
+        #endregion
+
+        mainUIBtn.SetActive(GameManager.Instance.isAndroidMode);
     }
 
     public void OnClickOpen()
@@ -51,6 +66,10 @@ public class InventoryManager : MonoBehaviour
     {
         GameManager.Instance.SetPlayerControllMode(false);
         inventory.gameObject.SetActive(false);
-        mainUIBtn.SetActive(true);
+
+        if (GameManager.Instance.isAndroidMode)
+        {
+            mainUIBtn.SetActive(true);
+        }
     }
 }

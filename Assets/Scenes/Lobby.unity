@@ -1011,4 +1011,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52913904a0404486cbc6143d85432c7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  connectBtn: {fileID: 1669978143}
   rememberMe: {fileID: 914371684}

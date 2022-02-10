@@ -1,8 +1,8 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 public static class Mock
@@ -11,6 +11,18 @@ public static class Mock
     public static readonly string network = "ropsten";
     public static readonly string contract = "0x9468097D8c5f6898B628c43B5Fcf575DE2d5Dc87";
     public static readonly string myAddress;
+
+    public static string ResourcePath
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return $"{Application.dataPath}/Resources";
+#else
+            return Application.persistentDataPath;
+#endif
+        }
+    }
 
     private class NFT
     {
@@ -26,8 +38,9 @@ public static class Mock
         public string image;
     }
 
-    // Mock 생성자 호출하기 위한 함수
-    public static void Initialize() { Debug.Log("Mock Initialized"); }
+    // 원래라면 서버가 가지고 있어야 할 정보들
+    public static List<ItemInfo.WorldInfo> worldObjectInfos = new List<ItemInfo.WorldInfo>();
+    public static Dictionary<string, ItemInfo> items = new Dictionary<string, ItemInfo>();
 
     static Mock()
     {
@@ -36,75 +49,112 @@ public static class Mock
 #else
         myAddress = PlayerPrefs.GetString("Account");
 #endif
-
-        LoadAllTokenID();
-
-        // 게임 오브젝트 추가되는 건 임시로 막음. 나중에 사용할 때 다시 꺼낼 것임
-        //foreach (var data in DB)
-        //{
-        //    Ground ground = Resources.Load<Ground>("Prefabs/Ground");
-        //    ground.tokenID = data.Key;
-        //
-        //    Ground obj = Object.Instantiate(ground);
-        //    obj.name = obj.name.Replace("(Clone)", $"{data.Key}");
-        //}
     }
 
-    public static async Task<bool> CheckMine(string tokenID)
-    {
-        string ownerAddress = await ERC721.OwnerOf(chain, network, contract, tokenID);
-        return myAddress == ownerAddress;
-    }
-
-    public static async Task<Texture> GetTexture(string tokenID)
-    {
-        string uri = await ERC721.URI(chain, network, contract, tokenID);
-
-        UnityWebRequest webRequest = UnityWebRequest.Get(uri);
-        await webRequest.SendWebRequest();
-
-        string imageUri = JsonUtility.FromJson<string>(System.Text.Encoding.UTF8.GetString(webRequest.downloadHandler.data));
-        UnityWebRequest textureRequest = UnityWebRequestTexture.GetTexture(imageUri);
-        await textureRequest.SendWebRequest();
-
-        return ((DownloadHandlerTexture)textureRequest.downloadHandler).texture;
-    }
-
-    private static async void LoadAllTokenID()
+    public static async void LoadItems()
     {
         string resJson = await EVM.AllErc721(chain, network, myAddress, contract);
 
         try
         {
+            Debug.Log(resJson);
             var items = JsonConvert.DeserializeObject<NFT[]>(resJson);
 
             for (int i = 0; i < items.Length; i++)
             {
-                //Debug.Log($"tokenID : {items[i].tokenId}");
-                //Debug.Log($"ipfsUri : {items[i].uri}");
-                //Debug.Log($"balance : {items[i].balance}");
-
                 UnityWebRequest webRequest = UnityWebRequest.Get(items[i].uri);
                 await webRequest.SendWebRequest();
 
                 IPFS_Info response = JsonUtility.FromJson<IPFS_Info>(System.Text.Encoding.UTF8.GetString(webRequest.downloadHandler.data));
-                //Debug.Log($"itemName : {response.name}");
-                //Debug.Log($"itemDescription : {response.description}");
-                //Debug.Log($"itemImageUri : {response.image}");
+
+                Debug.Log($"tokenID : {items[i].tokenId}");
+                Debug.Log($"ipfsUri : {items[i].uri}");
+                Debug.Log($"balance : {items[i].balance}");
+                
+                Debug.Log($"itemName : {response.name}");
+                Debug.Log($"itemDescription : {response.description}");
+                Debug.Log($"itemImageUri : {response.image}");
 
                 UnityWebRequest textureRequest = UnityWebRequestTexture.GetTexture(response.image);
                 await textureRequest.SendWebRequest();
                 Texture texture = ((DownloadHandlerTexture)textureRequest.downloadHandler).texture;
 
-                InventoryManager.Instance.items.Add(items[i].tokenId,
+                Mock.items.Add(items[i].tokenId,
                     new ItemInfo(items[i].tokenId, items[i].uri, items[i].balance,
                     response.name, response.description, texture)
                 );
+
+                LoadingSceneController.progress = (i + 1) / (float)items.Length;
             }
         }
         catch (Exception e)
         {
-            Debug.Log($"LoadAllTokenID error : {e}");
+            Debug.Log($"LoadAllTokenID Exception : {e}");
         }
+
+        LoadWorldObjectInfos();
+    }
+
+    private static void LoadWorldObjectInfos()
+    {
+        string path = $"{ResourcePath}/DB/WorldObjectInfos.json";
+        Debug.Log($"LoadWorldObjectInfos path : {path}");
+
+        if (File.Exists(path) == false)
+        {
+            goto LOAD_DONE;
+        }
+
+        try
+        {
+            TextAsset textAsset = Resources.Load<TextAsset>("DB/WorldObjectInfos");
+
+            if (textAsset == null || textAsset.text.Length <= 0)
+            {
+                Debug.Log($"textAsset is null or Length is under 0");
+                return;
+            }
+
+            worldObjectInfos = JsonConvert.DeserializeObject<List<ItemInfo.WorldInfo>>(textAsset.text);
+        }
+        catch (Exception e)
+        {
+            Debug.Log($"LoadWorldObjectInfos Exception : {e}");
+        }
+
+        // 아이템에 월드 정보 반영
+        foreach (var worldInfo in worldObjectInfos)
+        {
+            items[worldInfo.tokenID].worldInfo = worldInfo;
+        }
+
+    LOAD_DONE:
+        LoadingSceneController.isDone = true;
+    }
+
+    public static void SaveWorldObjectInfos()
+    {
+        // 기존 월드 정보 삭제
+        worldObjectInfos.Clear();
+
+        var items = InventoryManager.Instance.items;
+        foreach (var item in items)
+        {
+            // 설치되어있다면
+            if (item.Value.worldInfo.isPut)
+            {
+                worldObjectInfos.Add(item.Value.worldInfo);
+            }
+        }
+
+        // 폴더가 없을 경우 생성
+        if (Directory.Exists($"{ResourcePath}/DB") == false)
+        {
+            Directory.CreateDirectory($"{ResourcePath}/DB");
+        }
+
+        string path = $"{ResourcePath}/DB/WorldObjectInfos.json";
+        string json = JsonConvert.SerializeObject(worldObjectInfos);
+        File.WriteAllText(path, json);
     }
 }

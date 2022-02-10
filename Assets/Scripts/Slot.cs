@@ -21,6 +21,14 @@ public class Slot : MonoBehaviour, IPointerClickHandler
 
     public void OnClick()
     {
+        SettingItemInfo();
+
+        // 슬롯의 선택 이미지 활성화
+        InventoryManager.Instance.inventory.SelectSlot(this);
+    }
+
+    public void SettingItemInfo()
+    {
         var inventory = InventoryManager.Instance.inventory;
         var itemInfoPanel = inventory.itemInfoRect;
 
@@ -29,6 +37,7 @@ public class Slot : MonoBehaviour, IPointerClickHandler
         Text tokenIDText = itemInfoPanel.Find("TokenID").GetComponent<Text>();
         Text balanceText = itemInfoPanel.Find("Balance").GetComponent<Text>();
         Text contractText = itemInfoPanel.Find("Contract").GetComponent<Text>();
+        Text putText = itemInfoPanel.Find("Put").GetComponent<Text>();
 
         ItemInfo itemInfo = InventoryManager.Instance.items[tokenID];
 
@@ -38,8 +47,9 @@ public class Slot : MonoBehaviour, IPointerClickHandler
         tokenIDText.text = $"토큰ID : {tokenID}";
         balanceText.text = $"밸런스(수량) : {itemInfo.balance}";
         contractText.text = $"컨트랙트 주소: {Mock.contract}";
+        putText.text = $"사용 유무 : {(itemInfo.worldInfo.isPut ? "Y" : "N")}";
 
-        // 슬롯의 선택 이미지 활성화
-        inventory.SelectSlot(this);
+        inventory.useBtn.SetActive(itemInfo.worldInfo.isPut == false);
+        inventory.takeBtn.SetActive(itemInfo.worldInfo.isPut);
     }
 }

@@ -3,17 +3,25 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    [SerializeField] private RectTransform contents;
     public RectTransform itemInfoRect;
     public GameObject invenPanel;
     public GameObject itemInfoPanel;
     public GameObject usePanel;
+    public GameObject useBtn;
+    public GameObject takeBtn;
+    [SerializeField] private RectTransform contents;
 
     [HideInInspector] public bool itemChangeDetected;
     private List<Slot> slots = new List<Slot>();
     private int selSlotIdx;
 
+    private Transform holdItemPos;
     private GameObject holdingItem;
+
+    private void Start()
+    {
+        holdItemPos = GameObject.Find("HoldItemPos").transform;
+    }
 
     private void OnEnable()
     {
@@ -79,32 +87,58 @@ public class Inventory : MonoBehaviour
 
     public void OnClickUse()
     {
-        invenPanel.gameObject.SetActive(false);
+        invenPanel.SetActive(false);
         usePanel.SetActive(true);
 
         // 선택한 NFT의 정보로 오브젝트 소환.
         Ground ground = Resources.Load<Ground>("Prefabs/Ground");
         ground.tokenID = slots[selSlotIdx].tokenID;
-        holdingItem = Instantiate(ground, GameObject.Find("HoldItemPos").transform).gameObject;
+        holdingItem = Instantiate(ground, holdItemPos).gameObject;
         holdingItem.name = "HoldingItem";
+    }
+
+    public void OnClickTake()
+    {
+        ItemInfo itemInfo = InventoryManager.Instance.items[slots[selSlotIdx].tokenID];
+        itemInfo.worldInfo.isPut = false;
+
+        itemInfo.worldInfo.posX = 0;
+        itemInfo.worldInfo.posY = 0;
+        itemInfo.worldInfo.posZ = 0;
+
+        itemInfo.worldInfo.rotX = 0;
+        itemInfo.worldInfo.rotY = 0;
+        itemInfo.worldInfo.rotZ = 0;
+
+        Destroy(GameObject.Find(itemInfo.itemName));
+
+        slots[selSlotIdx].SettingItemInfo();
     }
 
     public void OnClickPutInUseMode()
     {
-        DestroyHoldingItem();
+        ItemInfo itemInfo = InventoryManager.Instance.items[slots[selSlotIdx].tokenID];
+        itemInfo.worldInfo.isPut = true;
+
+        itemInfo.worldInfo.posX = holdItemPos.position.x;
+        itemInfo.worldInfo.posY = holdItemPos.position.y;
+        itemInfo.worldInfo.posZ = holdItemPos.position.z;
+
+        itemInfo.worldInfo.rotX = holdItemPos.rotation.eulerAngles.x;
+        itemInfo.worldInfo.rotY = holdItemPos.rotation.eulerAngles.y;
+        itemInfo.worldInfo.rotZ = holdItemPos.rotation.eulerAngles.z;
+
+        holdingItem.transform.SetParent(GameObject.Find("Environment").transform);
+        holdingItem.name = itemInfo.itemName;
+
         InventoryManager.Instance.OnClickClose();
     }
 
-    public void OnClickCancleInUseMode()
-    {
-        DestroyHoldingItem();
-        invenPanel.gameObject.SetActive(true);
-        usePanel.SetActive(false);
-    }
-
-    private void DestroyHoldingItem()
+    public void OnClickCancelInUseMode()
     {
         Destroy(holdingItem);
         holdingItem = null;
+        invenPanel.SetActive(true);
+        usePanel.SetActive(false);
     }
 }

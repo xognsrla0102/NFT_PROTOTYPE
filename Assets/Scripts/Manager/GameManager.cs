@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-
+using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private static GameManager instance;
@@ -42,11 +41,6 @@ public class GameManager : MonoBehaviour
         SetPlayerControllMode(false);
     }
 
-    private void Start()
-    {
-        Mock.Initialize();
-    }
-
     private void Update()
     {
         // 뒤로가기 버튼 누르면 앱 종료
@@ -54,6 +48,12 @@ public class GameManager : MonoBehaviour
         {
             Application.Quit();
         }
+    }
+
+    private void OnApplicationQuit()
+    {
+        // 월드 오브젝트 정보 저장
+        Mock.SaveWorldObjectInfos();
     }
 
     public void SetPlayerControllMode(bool isUIControll)
