@@ -73,7 +73,6 @@ public class Inventory : MonoBehaviour
             slot.tokenID = item.Value.tokenID;
             slot.itemName.text = item.Value.itemName;
             slot.image.texture = item.Value.texture;
-            slot.name = slot.name.Replace("(Clone)", $"{slots.Count}");
             slot.selectedImg.SetActive(false);
         }
     }
@@ -91,9 +90,11 @@ public class Inventory : MonoBehaviour
         usePanel.SetActive(true);
 
         // 선택한 NFT의 정보로 오브젝트 소환.
-        Ground ground = Resources.Load<Ground>("Prefabs/Ground");
-        ground.tokenID = slots[selSlotIdx].tokenID;
-        holdingItem = Instantiate(ground, holdItemPos).gameObject;
+        ItemInfo itemInfo = InventoryManager.Instance.items[slots[selSlotIdx].tokenID];
+
+        // json이 설명에 이름이 들어가 있어서 임시로 이 코드 사용
+        GameObject house = Resources.Load<GameObject>($"Prefabs/Houses/{itemInfo.description}");
+        holdingItem = Instantiate(house, holdItemPos).gameObject;
         holdingItem.name = "HoldingItem";
     }
 
@@ -113,6 +114,8 @@ public class Inventory : MonoBehaviour
         Destroy(GameObject.Find(itemInfo.itemName));
 
         slots[selSlotIdx].SettingItemInfo();
+        
+        Mock.SaveWorldObjectInfos();
     }
 
     public void OnClickPutInUseMode()
@@ -124,12 +127,14 @@ public class Inventory : MonoBehaviour
         itemInfo.worldInfo.posY = holdItemPos.position.y;
         itemInfo.worldInfo.posZ = holdItemPos.position.z;
 
-        itemInfo.worldInfo.rotX = holdItemPos.rotation.eulerAngles.x;
-        itemInfo.worldInfo.rotY = holdItemPos.rotation.eulerAngles.y;
-        itemInfo.worldInfo.rotZ = holdItemPos.rotation.eulerAngles.z;
+        itemInfo.worldInfo.rotX = holdItemPos.eulerAngles.x;
+        itemInfo.worldInfo.rotY = holdItemPos.eulerAngles.y;
+        itemInfo.worldInfo.rotZ = holdItemPos.eulerAngles.z;
 
         holdingItem.transform.SetParent(GameObject.Find("Environment").transform);
         holdingItem.name = itemInfo.itemName;
+
+        Mock.SaveWorldObjectInfos();
 
         InventoryManager.Instance.OnClickClose();
     }

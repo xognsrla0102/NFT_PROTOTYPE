@@ -9,7 +9,7 @@ public class WalletLogin: MonoBehaviour
 
     void Start()
     {
-        rememberMe.isOn = false; //PlayerPrefs.GetInt("AutoConnectWallet") == 1 ? true : false;
+        rememberMe.isOn = PlayerPrefs.GetInt("AutoConnectWallet") == 1 ? true : false;
 
         // if remember me is checked, set the account to the saved account
         if (rememberMe.isOn && PlayerPrefs.GetString("Account") != "")

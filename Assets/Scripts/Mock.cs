@@ -60,6 +60,8 @@ public static class Mock
             Debug.Log(resJson);
             var items = JsonConvert.DeserializeObject<NFT[]>(resJson);
 
+            Debug.Log($"NFT 갯수 : {items.Length}");
+
             for (int i = 0; i < items.Length; i++)
             {
                 UnityWebRequest webRequest = UnityWebRequest.Get(items[i].uri);
@@ -116,6 +118,20 @@ public static class Mock
             }
 
             worldObjectInfos = JsonConvert.DeserializeObject<List<ItemInfo.WorldInfo>>(textAsset.text);
+
+            foreach (var worldInfo in worldObjectInfos)
+            {
+                Debug.Log($"tokenID : {worldInfo.tokenID}");
+                Debug.Log($"isPut : {worldInfo.isPut}");
+
+                Debug.Log($"posX : {worldInfo.posX}");
+                Debug.Log($"posY: {worldInfo.posY}");
+                Debug.Log($"posZ : {worldInfo.posZ}");
+
+                Debug.Log($"rotX : {worldInfo.rotX}");
+                Debug.Log($"rotY : {worldInfo.rotY}");
+                Debug.Log($"rotZ : {worldInfo.rotZ}");
+            }
         }
         catch (Exception e)
         {
@@ -134,13 +150,15 @@ public static class Mock
 
     public static void SaveWorldObjectInfos()
     {
+        Debug.Log("월드 오브젝트 정보 저장");
+
         // 기존 월드 정보 삭제
         worldObjectInfos.Clear();
 
         var items = InventoryManager.Instance.items;
         foreach (var item in items)
         {
-            // 설치되어있다면
+            // NFT가 설치되어 있는 것만 추가
             if (item.Value.worldInfo.isPut)
             {
                 worldObjectInfos.Add(item.Value.worldInfo);

@@ -50,12 +50,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnApplicationQuit()
-    {
-        // 월드 오브젝트 정보 저장
-        Mock.SaveWorldObjectInfos();
-    }
-
     public void SetPlayerControllMode(bool isUIControll)
     {
         // PC 모드일 때만 적용
