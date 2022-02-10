@@ -12,17 +12,7 @@ public static class Mock
     public static readonly string contract = "0x9468097D8c5f6898B628c43B5Fcf575DE2d5Dc87";
     public static readonly string myAddress;
 
-    public static string ResourcePath
-    {
-        get
-        {
-#if UNITY_EDITOR
-            return $"{Application.dataPath}/Resources";
-#else
-            return Application.persistentDataPath;
-#endif
-        }
-    }
+    public static string ResourcePath => Application.persistentDataPath;
 
     private class NFT
     {
@@ -109,15 +99,15 @@ public static class Mock
 
         try
         {
-            TextAsset textAsset = Resources.Load<TextAsset>("DB/WorldObjectInfos");
+            string json = File.ReadAllText(path);
 
-            if (textAsset == null || textAsset.text.Length <= 0)
+            if (json.Length <= 0)
             {
-                Debug.Log($"textAsset is null or Length is under 0");
+                Debug.Log($"Text length is under 0");
                 return;
             }
 
-            worldObjectInfos = JsonConvert.DeserializeObject<List<ItemInfo.WorldInfo>>(textAsset.text);
+            worldObjectInfos = JsonConvert.DeserializeObject<List<ItemInfo.WorldInfo>>(json);
 
             foreach (var worldInfo in worldObjectInfos)
             {
@@ -165,6 +155,20 @@ public static class Mock
             }
         }
 
+        foreach (var worldInfo in worldObjectInfos)
+        {
+            Debug.Log($"tokenID : {worldInfo.tokenID}");
+            Debug.Log($"isPut : {worldInfo.isPut}");
+
+            Debug.Log($"posX : {worldInfo.posX}");
+            Debug.Log($"posY: {worldInfo.posY}");
+            Debug.Log($"posZ : {worldInfo.posZ}");
+
+            Debug.Log($"rotX : {worldInfo.rotX}");
+            Debug.Log($"rotY : {worldInfo.rotY}");
+            Debug.Log($"rotZ : {worldInfo.rotZ}");
+        }
+
         // 폴더가 없을 경우 생성
         if (Directory.Exists($"{ResourcePath}/DB") == false)
         {
@@ -173,6 +177,7 @@ public static class Mock
 
         string path = $"{ResourcePath}/DB/WorldObjectInfos.json";
         string json = JsonConvert.SerializeObject(worldObjectInfos);
+        Debug.Log($"Write File Json : {json}");
         File.WriteAllText(path, json);
     }
 }
