@@ -8,8 +8,10 @@ using Newtonsoft.Json;
 public static class Mock
 {
     public static readonly string chain = "ethereum";
-    public static readonly string network = "ropsten";
-    public static readonly string contract = "0x9468097D8c5f6898B628c43B5Fcf575DE2d5Dc87";
+    public static readonly string network = "rinkeby";
+    //public static readonly string network = "ropsten";
+    public static readonly string contract = "0xefb39806B44593ba85F0E32709Aab0D6261891cd";
+    //public static readonly string contract = "0x9468097D8c5f6898B628c43B5Fcf575DE2d5Dc87";
     public static readonly string myAddress;
 
     public static string ResourcePath => Application.persistentDataPath;
@@ -131,6 +133,11 @@ public static class Mock
         // 아이템에 월드 정보 반영
         foreach (var worldInfo in worldObjectInfos)
         {
+            if (items.ContainsKey(worldInfo.tokenID) == false)
+            {
+                Debug.Log($"Failed to Find Token ID : {worldInfo.tokenID}");
+                continue;
+            }
             items[worldInfo.tokenID].worldInfo = worldInfo;
         }
 

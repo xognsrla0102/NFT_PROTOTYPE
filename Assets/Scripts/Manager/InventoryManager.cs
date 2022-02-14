@@ -38,11 +38,18 @@ public class InventoryManager : MonoBehaviour
         #region 월드 오브젝트 생성
         foreach (var worldInfo in Mock.worldObjectInfos)
         {
+            if (items.ContainsKey(worldInfo.tokenID) == false)
+            {
+                Debug.Log($"Failed to Find Token ID : {worldInfo.tokenID}");
+                continue;
+            }
+
             ItemInfo itemInfo = items[worldInfo.tokenID];
-            GameObject house = Resources.Load<GameObject>($"Prefabs/Houses/{itemInfo.description}");
+            GameObject house = Resources.Load<GameObject>("Prefabs/Cube");
 
             GameObject obj = Instantiate(house, GameObject.Find("Environment").transform);
             obj.name = itemInfo.itemName;
+            obj.GetComponent<Renderer>().material.mainTexture = itemInfo.texture;
             obj.transform.SetPositionAndRotation(
                 new Vector3(itemInfo.worldInfo.posX, itemInfo.worldInfo.posY, itemInfo.worldInfo.posZ),
                 Quaternion.Euler(new Vector3(itemInfo.worldInfo.rotX, itemInfo.worldInfo.rotY, itemInfo.worldInfo.rotZ))

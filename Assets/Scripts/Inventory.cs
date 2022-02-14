@@ -92,9 +92,9 @@ public class Inventory : MonoBehaviour
         // 선택한 NFT의 정보로 오브젝트 소환.
         ItemInfo itemInfo = InventoryManager.Instance.items[slots[selSlotIdx].tokenID];
 
-        // json이 설명에 이름이 들어가 있어서 임시로 이 코드 사용
-        GameObject house = Resources.Load<GameObject>($"Prefabs/Houses/{itemInfo.description}");
-        holdingItem = Instantiate(house, holdItemPos).gameObject;
+        GameObject cube = Resources.Load<GameObject>("Prefabs/Cube");
+        holdingItem = Instantiate(cube, holdItemPos).gameObject;
+        holdingItem.GetComponent<Renderer>().material.mainTexture = itemInfo.texture;
         holdingItem.name = "HoldingItem";
     }
 
@@ -121,7 +121,11 @@ public class Inventory : MonoBehaviour
     public void OnClickPutInUseMode()
     {
         ItemInfo itemInfo = InventoryManager.Instance.items[slots[selSlotIdx].tokenID];
+
+        holdingItem.transform.SetParent(GameObject.Find("Environment").transform);
         itemInfo.worldInfo.isPut = true;
+
+        holdingItem.name = itemInfo.itemName;
 
         itemInfo.worldInfo.posX = holdItemPos.position.x;
         itemInfo.worldInfo.posY = holdItemPos.position.y;
@@ -130,9 +134,6 @@ public class Inventory : MonoBehaviour
         itemInfo.worldInfo.rotX = holdItemPos.eulerAngles.x;
         itemInfo.worldInfo.rotY = holdItemPos.eulerAngles.y;
         itemInfo.worldInfo.rotZ = holdItemPos.eulerAngles.z;
-
-        holdingItem.transform.SetParent(GameObject.Find("Environment").transform);
-        holdingItem.name = itemInfo.itemName;
 
         Mock.SaveWorldObjectInfos();
 
