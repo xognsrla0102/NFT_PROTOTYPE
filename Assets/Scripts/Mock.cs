@@ -9,8 +9,9 @@ public static class Mock
 {
     public static readonly string chain = "ethereum";
     public static readonly string network = "rinkeby";
+    public static readonly string contract = "0xB1A8546F7c1ea062337383aFcE2257B51483f0A2";
+    // 이전에 썼던 테스트넷과 컨트랙트
     //public static readonly string network = "ropsten";
-    public static readonly string contract = "0xefb39806B44593ba85F0E32709Aab0D6261891cd";
     //public static readonly string contract = "0x9468097D8c5f6898B628c43B5Fcf575DE2d5Dc87";
     public static readonly string myAddress;
 
