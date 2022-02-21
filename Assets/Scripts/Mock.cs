@@ -111,14 +111,15 @@ public static class Mock
             }
 
             worldObjectInfos = JsonConvert.DeserializeObject<List<ItemInfo.WorldInfo>>(json);
-
+            
             foreach (var worldInfo in worldObjectInfos)
             {
                 Debug.Log($"tokenID : {worldInfo.tokenID}");
+                
                 Debug.Log($"isPut : {worldInfo.isPut}");
 
                 Debug.Log($"posX : {worldInfo.posX}");
-                Debug.Log($"posY: {worldInfo.posY}");
+                Debug.Log($"posY : {worldInfo.posY}");
                 Debug.Log($"posZ : {worldInfo.posZ}");
 
                 Debug.Log($"rotX : {worldInfo.rotX}");
@@ -136,7 +137,7 @@ public static class Mock
         {
             if (items.ContainsKey(worldInfo.tokenID) == false)
             {
-                Debug.Log($"Failed to Find Token ID : {worldInfo.tokenID}");
+                Debug.Log($"Failed to Find Token ID : {worldInfo.tokenID}\nMaybe Sold");
                 continue;
             }
             items[worldInfo.tokenID].worldInfo = worldInfo;
